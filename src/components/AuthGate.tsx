@@ -40,7 +40,7 @@ export default function AuthGate() {
         const s = await getSettings();
         if (s.pin_hash && sessionStorage.getItem("ys_unlocked") === "true") {
           sessionStorage.removeItem("ys_unlocked");
-          window.location.href = "/lock";
+          window.location.href = "#/lock";
         }
       }
     };
@@ -66,5 +66,5 @@ export function markUnlocked() {
 
 export async function markLocked() { 
   sessionStorage.removeItem("ys_unlocked");
-  window.location.href = "/lock";
+  window.location.href = "#/lock";
 }
