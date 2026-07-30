@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import LangToggle from "@/components/LangToggle";
-import { db } from "@/lib/db";
+import { db, exportDB } from "@/lib/db";
 import { toast } from "@/hooks/use-toast";
 import { markLocked } from "@/components/AuthGate";
 import { Lock, Upload, Download, LogOut, LayoutGrid } from "lucide-react";
 import { format } from "date-fns";
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 export default function Settings() {
   const { t } = useI18n();
@@ -29,9 +32,9 @@ export default function Settings() {
   useEffect(() => {
     if (settings) {
       setForm({
-        business_name: settings.business_name,
-        owner_name: settings.owner_name,
-        location: settings.location
+        business_name: settings.business_name || "",
+        owner_name: settings.owner_name || "",
+        location: settings.location || ""
       });
     }
   }, [settings?.business_name, settings?.owner_name, settings?.location]);
@@ -58,22 +61,37 @@ export default function Settings() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   };
 
-  const exportData = async () => {
+  const handleBackup = async () => {
     try {
-      const data = {
-        products: await db.products.toArray(),
-        sales: await db.sales.toArray(),
-        sale_items: await db.sale_items.toArray(),
-        expenses: await db.expenses.toArray(),
-        settings: await db.settings.get(1)
-      };
-      const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${settings.business_name.replace(/\s+/g, "_") || "Tunda"}_Backup_${format(Date.now(), "yyyyMMdd")}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+      const dbExport = await exportDB();
+      const jsonStr = JSON.stringify(dbExport);
+      const fileName = `${settings.business_name.replace(/\s+/g, "_") || "Tunda"}_Backup_${format(Date.now(), "yyyyMMdd_HHmmss")}.json`;
+
+      if (Capacitor.isNativePlatform()) {
+        const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
+        const savedFile = await Filesystem.writeFile({
+          path: fileName,
+          data: base64Str,
+          directory: Directory.Cache
+        });
+        await Share.share({
+          title: 'Database Backup',
+          text: 'Here is your database backup file.',
+          url: savedFile.uri,
+          dialogTitle: 'Save Backup File'
+        });
+      } else {
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
       toast({ title: t.done });
     } catch (e: any) {
       toast({ title: "Backup Error", description: e.message, variant: "destructive" });
@@ -133,7 +151,7 @@ export default function Settings() {
 
 
           <div className="mt-2 flex gap-3">
-            <Button variant="outline" onClick={exportData} className="flex-1 justify-center gap-2 h-12 rounded-xl">
+            <Button variant="outline" onClick={handleBackup} className="flex-1 justify-center gap-2 h-12 rounded-xl">
               <Download className="h-4 w-4" /> {t.backup}
             </Button>
             <Button variant="outline" onClick={() => fileRef.current?.click()} className="flex-1 justify-center gap-2 h-12 rounded-xl">

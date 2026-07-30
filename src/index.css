@@ -103,7 +103,10 @@
 
 @layer base {
   * { @apply border-border; }
-  html { font-size: 12px; } /* Scales the entire Tailwind UI down to 75% of default (16px) */
+  html { font-size: 16px; }
+  @media (min-width: 768px) {
+    html { font-size: 12px; }
+  }
   html, body, #root { @apply h-full; }
   body {
     @apply bg-background text-foreground antialiased;

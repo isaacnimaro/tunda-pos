@@ -3,6 +3,9 @@ import autoTable from "jspdf-autotable";
 import { db, sumSales, sumExpenses, sumProfit } from "./db";
 import { format, startOfDay, startOfWeek, startOfMonth } from "date-fns";
 import { fmtUGX } from "./i18n";
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 export type ReportGroupType = "daily" | "weekly" | "monthly" | "raw";
 
@@ -133,5 +136,22 @@ export async function generateReportPDF(
     });
   }
 
-  doc.save(`${businessName.replace(/\s+/g, "_")}_${groupBy}_Report_${format(Date.now(), "yyyyMMdd")}.pdf`);
+  const fileName = `${businessName.replace(/\s+/g, "_")}_${groupBy}_Report_${format(Date.now(), "yyyyMMdd")}.pdf`;
+
+  if (Capacitor.isNativePlatform()) {
+    const base64Str = doc.output('datauristring').split(',')[1];
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: base64Str,
+      directory: Directory.Cache
+    });
+    await Share.share({
+      title: 'Sales Report',
+      text: 'Here is the generated sales report.',
+      url: savedFile.uri,
+      dialogTitle: 'Save or Share Report'
+    });
+  } else {
+    doc.save(fileName);
+  }
 }
