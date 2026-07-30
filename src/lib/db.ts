@@ -217,3 +217,13 @@ export async function sumExpenses(fromTs: number, toTs = Date.now()) {
 export async function seedIfEmpty() {
   // Deliberately empty so new users start with a fresh shop
 }
+
+export async function exportDB() {
+  return {
+    products: await db.products.toArray(),
+    sales: await db.sales.toArray(),
+    sale_items: await db.sale_items.toArray(),
+    expenses: await db.expenses.toArray(),
+    settings: await db.settings.get(1)
+  };
+}
