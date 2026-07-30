@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Emerald/Zinc Premium Aesthetics */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    /* Premium Emerald */
+    --primary: 153 60% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 153 60% 95%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --secondary-soft: 240 4.8% 98%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --accent-soft: 240 4.8% 98%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 153 60% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 153 60% 45%;
+
+    --radius: 1.25rem;
+
+    --shadow-card: 0 4px 24px -8px rgba(0,0,0,0.06);
+    --shadow-tile: 0 4px 14px rgba(0,0,0,0.06);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 6% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 6% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 153 60% 50%;
+    --primary-foreground: 0 0% 10%;
+    --primary-soft: 153 60% 12%;
+
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-soft: 240 4% 12%;
+
+    --accent: 240 4% 16%;
+    --accent-foreground: 0 0% 98%;
+    --accent-soft: 240 4% 12%;
+
+    --muted: 240 5% 18%;
+    --muted-foreground: 240 5% 65%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 153 60% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 48 96% 53%;
+    --warning-foreground: 0 0% 10%;
+
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 153 60% 50%;
+    
+    --shadow-card: 0 8px 32px -8px rgba(0,0,0,0.4);
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { font-size: 12px; } /* Scales the entire Tailwind UI down to 75% of default (16px) */
+  html, body, #root { @apply h-full; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+@layer components {
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  
+  .tile {
+    @apply flex flex-col items-center justify-center gap-2 rounded-2xl p-4 shadow-[var(--shadow-card)] transition-transform active:scale-95 select-none;
+    min-height: 6rem;
+  }
+  .big-btn {
+    @apply h-12 rounded-xl text-base font-bold tracking-tight;
+  }
+  .screen {
+    @apply mx-auto w-full max-w-md min-h-full bg-background flex flex-col relative overflow-hidden text-slate-800 dark:text-slate-100;
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* Crisp Bento Box UI */
+  .bento-card {
+    @apply bg-white dark:bg-[#121214] border border-slate-200 dark:border-white/[0.05] shadow-[var(--shadow-card)];
+  }
+  .glass { @apply bento-card; }
+  .glass-tile {
+    @apply flex flex-col items-center justify-center gap-1.5 rounded-2xl p-4 transition-all duration-300 active:scale-95 select-none bento-card;
+    min-height: 5.5rem;
+  }
+  .glass-panel {
+    @apply rounded-2xl p-5 mb-4 bento-card;
+  }
+}
